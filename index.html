@@ -544,7 +544,7 @@
 
         const total = allData.length;
         const referrers = allData.filter(r => (r.referral_count || 0) > 0).length;
-        const totalReferred = allData.filter(r => r.referred_by_slug).length;
+        const totalReferred = allData.reduce((sum, r) => sum + (r.referral_count || 0), 0);
         maxReferrals = Math.max(1, ...allData.map(r => r.referral_count || 0));
 
         animateCount('stat-total', total);
