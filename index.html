@@ -480,7 +480,7 @@
       try {
         // Fetch all profiles sorted by referral_count desc
         const res = await fetch(
-          `${SUPABASE_URL}/rest/v1/waitlist?select=email,referral_slug,referral_count,referred_by_slug&order=referral_count.desc&limit=1000`,
+          `${SUPABASE_URL}/rest/v1/waitlist?select=email,referral_slug,referral_count,referred_by_slug&order=referral_count.desc&limit=5000`,
           {
             headers: {
               'apikey': SUPABASE_KEY,
