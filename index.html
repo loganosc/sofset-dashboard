@@ -518,21 +518,29 @@
       `;
 
       try {
-        const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/waitlist?select=email,referral_slug,referral_count,referred_by_slug,created_at&order=referral_count.desc`,
-        {
-          headers: {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`,
-            'Range-Unit': 'items',
-            'Range': '0-4999'
-          }
+        const PAGE_SIZE = 1000;
+        allData = [];
+        let page = 0;
+        while (true) {
+          const from = page * PAGE_SIZE;
+          const to = from + PAGE_SIZE - 1;
+          const res = await fetch(
+            `${SUPABASE_URL}/rest/v1/waitlist?select=email,referral_slug,referral_count,referred_by_slug,created_at&order=referral_count.desc`,
+            {
+              headers: {
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`,
+                'Range-Unit': 'items',
+                'Range': `${from}-${to}`
+              }
+            }
+          );
+          if (!res.ok) throw new Error('Failed to fetch');
+          const batch = await res.json();
+          allData = allData.concat(batch);
+          if (batch.length < PAGE_SIZE) break;
+          page++;
         }
-      );
-
-        if (!res.ok) throw new Error('Failed to fetch');
-
-        allData = await res.json();
 
         const total = allData.length;
         const referrers = allData.filter(r => (r.referral_count || 0) > 0).length;
